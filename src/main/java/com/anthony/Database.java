@@ -7,14 +7,20 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
+
+import java.util.Random;
+
 public class Database {
 
     private final HikariDataSource dataSource;
     private static final Logger logger = LoggerFactory.getLogger(Database.class);
+    private final Random rand;
+
     public Database() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:sqlite:bank.db");
         dataSource = new HikariDataSource(config);
+        rand = new Random();
     }
 
     public void createTable() {
@@ -30,7 +36,7 @@ public class Database {
         try (Connection connection = dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1, columnName);
             preparedStatement.setString(2, value);
-            System.out.println("Attempting to add account.");
+            logger.info("Attempting to add account.");
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error adding account: ", e);
@@ -44,7 +50,7 @@ public class Database {
         try (Connection connection = dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, columnName);
             preparedStatement.setString(2, value);
-            System.out.println("Attempting to delete account: ");
+            logger.info("Attempting to delete account.");
             int rowsAffected = preparedStatement.executeUpdate();
             if(rowsAffected == 0){
                 System.out.println("Successfully deleted account.");
@@ -115,14 +121,27 @@ public class Database {
         }
     }
 
+    public String genID(){
+        StringBuilder iD = new StringBuilder();
+        for (int i = 0; i < 12; i++) iD.append(rand.nextInt(0,10));
+        return iD.toString();
+    }
+
+
+
+
     public void deleteTable(){
         String sql = "DROP TABLE accounts";
         try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()){
-            System.out.println("Deleting table....");
+            logger.info("Deleting table...");
             statement.execute(sql);
         } catch (SQLException e){
             logger.error("Error deleting table: ", e);
         }
+    }
+
+    public void close(){
+        if(dataSource != null){dataSource.close();}
     }
 
 

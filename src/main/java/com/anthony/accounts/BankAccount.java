@@ -5,11 +5,12 @@ import com.anthony.Database;
 public class BankAccount {
     private final Database db;
     private final String accountHolder;
-    private int accountID;
+    private String accountID;
 
     public BankAccount(String accountHolder) {
         db = new Database();
         this.accountHolder = accountHolder;
+        this.accountID = db.genID();
     }
 
     public void createAccountTable() {
@@ -17,11 +18,11 @@ public class BankAccount {
     }
 
     public void addAccount() {
-        db.addEntry(Integer.toString(accountID), accountHolder);
+        db.addEntry(accountID, accountHolder);
     }
 
     public void deleteAccount() {
-        db.deleteEntry(Integer.toString(accountID), accountHolder);
+        db.deleteEntry(accountID, accountHolder);
     }
 
     public int getAllAccounts() {
@@ -37,7 +38,7 @@ public class BankAccount {
         return db.getValue();
     }
 
-    public void setAccountID(int ID){
+    public void setAccountID(String ID){
         this.accountID = ID;
     }
 

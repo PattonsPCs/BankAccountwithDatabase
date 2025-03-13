@@ -2,16 +2,24 @@ package com.anthony;
 
 import com.anthony.accounts.BankAccount;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        BankAccount account = new BankAccount("Anthony");
-        account.createAccountTable();
-        account.setAccountID((account.getLatestID() + 1));
+        Database db = new Database();
+        Scanner in = new Scanner(System.in);
+
+        System.out.println("Please enter in your full name for your account: ");
+        String name = in.nextLine();
+
+        BankAccount account = new BankAccount(name);
+
+        db.createTable();
         account.addAccount();
+        System.out.println("Account added.");
         System.out.println("Number of accounts: " + account.getAllAccounts());
-        System.out.println("Account ID: " + account.getAccountID());
         System.out.println("Account Holder: " + account.getAccountHolder());
-        account.deleteAccount();
-        System.out.println("Number of accounts: " + account.getAllAccounts());
+        System.out.println("Account #: " + account.getAccountID());
+        db.close();
     }
 }
